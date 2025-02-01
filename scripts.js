@@ -6,10 +6,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Initialize Leaflet Routing Machine control
+// Initialize Leaflet Routing Machine control (empty initially)
 let routeControl = L.Routing.control({
     waypoints: [],
-    routeWhileDragging: true
+    routeWhileDragging: true,
+    createMarker: function() { return null; }  // Disable markers
 }).addTo(map);
 
 // Placeholder for bus data
@@ -41,14 +42,20 @@ function displayBuses(start, end) {
     filteredBuses.forEach(bus => {
         const li = document.createElement('li');
         li.textContent = `${bus.name} - Arrives at ${bus.arrivalTime}`;
-        li.onclick = () => showRoute(bus);  // Trigger showRoute when bus is clicked
+        li.onclick = () => {
+            showRoute(bus);  // Trigger showRoute when bus is clicked
+        };
         busList.appendChild(li);
     });
 }
 
 // Function to show bus route on the map (following the road network)
 function showRoute(bus) {
-    // Clear previous routes
+    // Store current map center and zoom before changing the route
+    const currentCenter = map.getCenter();
+    const currentZoom = map.getZoom();
+
+    // Clear any previously shown route
     routeControl.setWaypoints([]);
 
     // Set the waypoints for the selected bus route
@@ -62,8 +69,8 @@ function showRoute(bus) {
         routeWhileDragging: true
     }).addTo(map);
 
-    // Adjust map view to fit route
-    map.fitBounds([start, end]);
+    // Restore the map state (center and zoom level)
+    map.setView(currentCenter, currentZoom);
 }
 
 // Function to filter suggestions based on input and display matching destinations
@@ -106,27 +113,4 @@ document.getElementById('search-btn').addEventListener('click', () => {
 
 // Handle search for buses by name (with suggestions)
 const busSearchInput = document.getElementById('bus-search');
-const busSuggestions = document.getElementById('bus-suggestions');
-
-busSearchInput.addEventListener('input', () => {
-    const query = busSearchInput.value.toLowerCase();
-    busSuggestions.innerHTML = "";
-    if (query) {
-        const filteredBuses = buses.filter(bus => bus.name.toLowerCase().includes(query));
-        filteredBuses.forEach(bus => {
-            const div = document.createElement('div');
-            div.textContent = bus.name;
-            div.onclick = () => {
-                busSearchInput.value = bus.name;
-                busSuggestions.innerHTML = "";
-                showRoute(bus);
-            };
-            busSuggestions.appendChild(div);
-        });
-    }
-});
-
-// Display buses on page load
-window.onload = () => {
-    displayBuses();  // Show all buses within the map area
-};
+const busSuggestions = documen
