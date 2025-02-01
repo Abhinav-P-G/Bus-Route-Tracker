@@ -7,30 +7,53 @@ body {
 header {
   background-color: #4CAF50;
   color: white;
-  text-align: center;
   padding: 20px;
+  text-align: center;
 }
 
 .search {
-  text-align: center;
-  margin: 20px;
+  padding: 20px;
 }
 
-.search input {
+#start-destination, #end-destination, #bus-search {
+  width: 300px;
   padding: 10px;
-  margin: 10px;
-  width: 200px;
+  margin: 5px 0;
+}
+
+button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.suggestions {
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  position: absolute;
+  width: 300px;
+  background-color: white;
+}
+
+.suggestions div {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestions div:hover {
+  background-color: #ddd;
 }
 
 #map {
-  height: 500px; /* Ensure the map takes up space */
-  width: 100%;
+  height: 500px;
   margin-top: 20px;
-}
-
-#bus-info {
-  margin-top: 20px;
-  padding: 20px;
 }
 
 #bus-list {
@@ -39,8 +62,5 @@ header {
 }
 
 #bus-list li {
-  padding: 5px;
-  background-color: #f4f4f4;
-  margin: 5px;
   cursor: pointer;
 }

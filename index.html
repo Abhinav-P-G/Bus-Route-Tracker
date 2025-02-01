@@ -17,14 +17,19 @@
     <section class="search">
         <label for="start-destination">Start Destination:</label>
         <input type="text" id="start-destination" placeholder="Enter start location">
-        
+        <div id="start-suggestions" class="suggestions"></div>
+
         <label for="end-destination">End Destination:</label>
         <input type="text" id="end-destination" placeholder="Enter end location">
+        <div id="end-suggestions" class="suggestions"></div>
+        
+        <button id="search-btn">Search Buses</button>
     </section>
 
     <section class="bus-search">
         <label for="bus-search">Search Bus by Name:</label>
         <input type="text" id="bus-search" placeholder="Search bus">
+        <div id="bus-suggestions" class="suggestions"></div>
     </section>
 
     <!-- This div will contain the map -->

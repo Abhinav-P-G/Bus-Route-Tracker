@@ -19,6 +19,9 @@ const buses = [
     { name: "Bus 103", route: [[51.505, -0.09], [51.535, -0.14]], stops: ["Central Park", "Airport"], arrivalTime: "11:00 AM" }
 ];
 
+// Predefined destinations
+const predefinedDestinations = ["Downtown", "Airport", "Central Park"];
+
 // Function to display buses based on the selected destinations
 function displayBuses(start, end) {
     const busList = document.getElementById('bus-list');
@@ -53,36 +56,61 @@ function showRoute(bus) {
     map.fitBounds([start, end]);
 }
 
+// Function to filter suggestions based on input and display matching destinations
+function filterDestinations(input, suggestionsDiv, destinations) {
+    const query = input.value.toLowerCase();
+    suggestionsDiv.innerHTML = ""; // Clear current suggestions
+    if (query) {
+        const filteredDestinations = destinations.filter(dest => dest.toLowerCase().includes(query));
+        filteredDestinations.forEach(dest => {
+            const div = document.createElement('div');
+            div.textContent = dest;
+            div.onclick = () => {
+                input.value = dest;
+                suggestionsDiv.innerHTML = "";
+            };
+            suggestionsDiv.appendChild(div);
+        });
+    }
+}
+
 // Handle input in the destination fields
-document.getElementById('start-destination').addEventListener('input', () => {
-    const start = document.getElementById('start-destination').value;
-    const end = document.getElementById('end-destination').value;
+const startInput = document.getElementById('start-destination');
+const endInput = document.getElementById('end-destination');
+const startSuggestions = document.getElementById('start-suggestions');
+const endSuggestions = document.getElementById('end-suggestions');
+
+startInput.addEventListener('input', () => filterDestinations(startInput, startSuggestions, predefinedDestinations));
+endInput.addEventListener('input', () => filterDestinations(endInput, endSuggestions, predefinedDestinations));
+
+// Handle search button click to display buses based on selected destinations
+document.getElementById('search-btn').addEventListener('click', () => {
+    const start = startInput.value;
+    const end = endInput.value;
     if (start && end) {
         displayBuses(start, end);
     }
 });
 
-document.getElementById('end-destination').addEventListener('input', () => {
-    const start = document.getElementById('start-destination').value;
-    const end = document.getElementById('end-destination').value;
-    if (start && end) {
-        displayBuses(start, end);
-    }
-});
+// Handle search for buses by name (with suggestions)
+const busSearchInput = document.getElementById('bus-search');
+const busSuggestions = document.getElementById('bus-suggestions');
 
-// Handle search for buses by name
-document.getElementById('bus-search').addEventListener('input', (event) => {
-    const query = event.target.value.toLowerCase();
-    const busList = document.getElementById('bus-list');
-    const busItems = busList.getElementsByTagName('li');
-    
-    for (let i = 0; i < busItems.length; i++) {
-        const busName = busItems[i].textContent.toLowerCase();
-        if (busName.includes(query)) {
-            busItems[i].style.display = "";
-        } else {
-            busItems[i].style.display = "none";
-        }
+busSearchInput.addEventListener('input', () => {
+    const query = busSearchInput.value.toLowerCase();
+    busSuggestions.innerHTML = "";
+    if (query) {
+        const filteredBuses = buses.filter(bus => bus.name.toLowerCase().includes(query));
+        filteredBuses.forEach(bus => {
+            const div = document.createElement('div');
+            div.textContent = bus.name;
+            div.onclick = () => {
+                busSearchInput.value = bus.name;
+                busSuggestions.innerHTML = "";
+                showRoute(bus);
+            };
+            busSuggestions.appendChild(div);
+        });
     }
 });
 
