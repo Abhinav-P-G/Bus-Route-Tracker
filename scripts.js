@@ -22,12 +22,22 @@ const buses = [
 // Predefined destinations
 const predefinedDestinations = ["Downtown", "Airport", "Central Park"];
 
-// Function to display buses based on the selected destinations
+// Function to display buses based on the selected destinations or visible area
 function displayBuses(start, end) {
     const busList = document.getElementById('bus-list');
     busList.innerHTML = ""; // Clear current list
 
-    const filteredBuses = buses.filter(bus => bus.stops.includes(start) && bus.stops.includes(end));
+    const filteredBuses = buses.filter(bus => {
+        // If no start/end destination entered, show buses within the map bounds
+        if (!start && !end) {
+            const bounds = map.getBounds();
+            const busLatLng = L.latLng(bus.route[0][0], bus.route[0][1]);
+            return bounds.contains(busLatLng);  // Check if bus stop is within the bounds of the map
+        }
+        // Otherwise, filter buses that pass through both the start and end destinations
+        return bus.stops.includes(start) && bus.stops.includes(end);
+    });
+
     filteredBuses.forEach(bus => {
         const li = document.createElement('li');
         li.textContent = `${bus.name} - Arrives at ${bus.arrivalTime}`;
@@ -88,7 +98,9 @@ document.getElementById('search-btn').addEventListener('click', () => {
     const start = startInput.value;
     const end = endInput.value;
     if (start && end) {
-        displayBuses(start, end);
+        displayBuses(start, end);  // Show buses filtered by start and end destinations
+    } else {
+        displayBuses();  // Show all buses within the current map area if no destinations entered
     }
 });
 
@@ -116,5 +128,5 @@ busSearchInput.addEventListener('input', () => {
 
 // Display buses on page load
 window.onload = () => {
-    displayBuses("Downtown", "Airport");  // Default example
+    displayBuses();  // Show all buses within the map area
 };
