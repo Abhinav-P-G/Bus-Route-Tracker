@@ -1,3 +1,42 @@
+// Placeholder for bus data with arrival times based on start destination
+const buses = [
+    { 
+        name: "Bus 101", 
+        route: [
+            [51.505, -0.09], // Stop 1: Downtown
+            [51.515, -0.1],  // Stop 2: Airport
+            [51.525, -0.12], // Stop 3: Central Station
+            [51.535, -0.14]  // Stop 4: Central Park
+        ], 
+        stops: ["Downtown", "Airport", "Central Station", "Central Park"],
+        arrivalTimes: {
+            "Downtown": "10:30 AM",
+            "Airport": "10:40 AM",
+            "Central Station": "10:50 AM",
+            "Central Park": "11:00 AM"
+        }
+    },
+    { 
+        name: "Bus 102", 
+        route: [
+            [51.505, -0.09], 
+            [51.525, -0.12], 
+            [51.545, -0.15], 
+            [51.555, -0.17]
+        ], 
+        stops: ["Downtown", "Central Park", "Riverside", "Museum District"],
+        arrivalTimes: {
+            "Downtown": "10:45 AM",
+            "Central Park": "10:55 AM",
+            "Riverside": "11:05 AM",
+            "Museum District": "11:15 AM"
+        }
+    }
+];
+
+// Predefined destinations
+const predefinedDestinations = ["Downtown", "Airport", "Central Park", "Riverside", "Museum District"];
+
 // Initialize map
 const map = L.map('map').setView([51.505, -0.09], 13); // Default location
 
@@ -6,31 +45,42 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Initialize Leaflet Routing Machine control
+// Global variable for routeControl
 let routeControl = L.Routing.control({
     waypoints: [],
     routeWhileDragging: true
 }).addTo(map);
 
-// Placeholder for bus data
-const buses = [
-    { name: "Bus 101", route: [[51.505, -0.09], [51.515, -0.1]], stops: ["Downtown", "Airport"], arrivalTime: "10:30 AM" },
-    { name: "Bus 102", route: [[51.505, -0.09], [51.525, -0.12]], stops: ["Downtown", "Central Park"], arrivalTime: "10:45 AM" },
-    { name: "Bus 103", route: [[51.505, -0.09], [51.535, -0.14]], stops: ["Central Park", "Airport"], arrivalTime: "11:00 AM" }
-];
+// DOM element initializations
+const startInput = document.getElementById('start-destination');
+const endInput = document.getElementById('end-destination');
+const startSuggestions = document.getElementById('start-suggestions');
+const endSuggestions = document.getElementById('end-suggestions');
+const busSearchInput = document.getElementById('bus-search');
+const busSuggestions = document.getElementById('bus-suggestions');
+const busList = document.getElementById('bus-list');
 
-// Predefined destinations
-const predefinedDestinations = ["Downtown", "Airport", "Central Park"];
+// Function to handle map load event
+map.on('load', () => {
+    displayBuses();  // Show all buses within the map area
+});
 
 // Function to display buses based on the selected destinations or visible area
 function displayBuses(start, end) {
-    const busList = document.getElementById('bus-list');
     busList.innerHTML = ""; // Clear current list
+
+    // Ensure that map is fully initialized and bounds are available
+    const bounds = map.getBounds ? map.getBounds() : null;
+
+    // Check if bounds are available (map is loaded)
+    if (!bounds) {
+        console.error("Map bounds are not available");
+        return; // Exit the function if bounds are not available
+    }
 
     const filteredBuses = buses.filter(bus => {
         // If no start/end destination entered, show buses within the map bounds
         if (!start && !end) {
-            const bounds = map.getBounds();
             const busLatLng = L.latLng(bus.route[0][0], bus.route[0][1]);
             return bounds.contains(busLatLng);  // Check if bus stop is within the bounds of the map
         }
@@ -40,44 +90,65 @@ function displayBuses(start, end) {
 
     filteredBuses.forEach(bus => {
         const li = document.createElement('li');
-        li.textContent = `${bus.name} - Arrives at ${bus.arrivalTime}`;
+        li.textContent = `${bus.name} - Arrives at ${bus.arrivalTimes[start] || 'N/A'}`;
         li.onclick = () => showRoute(bus);  // Trigger showRoute when bus is clicked
         busList.appendChild(li);
     });
 }
 
-// Function to show bus route on the map (following the road network)
+// Function to show bus route on the map
 function showRoute(bus) {
+    // Clear previous routes
+    routeControl.setWaypoints([]); // Clear previous route
+
+    // Set the waypoints for the selected bus route (from start to end)
+    const waypoints = bus.route.map(stop => L.latLng(stop[0], stop[1]));
+
+    // Create a routing control and pass the OSRM URL
+    routeControl.setWaypoints(waypoints);
+
+    // Adjust map view to fit the route (using getRoute().getBounds())
+    const routeBounds = routeControl.getRoute().getBounds();
+    map.fitBounds(routeBounds);  // Fit map to the route bounds
+}
+
+// Function to refresh the map
+function refreshMap() {
     // Clear previous routes
     routeControl.setWaypoints([]);
 
-    // Set the waypoints for the selected bus route
-    const start = L.latLng(bus.route[0][0], bus.route[0][1]);
-    const end = L.latLng(bus.route[1][0], bus.route[1][1]);
+    // Reset the map view to its initial state (center and zoom level)
+    map.setView([51.505, -0.09], 13); // Set back to the initial center and zoom
 
-    // Create a routing control and pass the OSRM URL
-    L.Routing.control({
-        waypoints: [start, end],
-        createMarker: function() { return null; }, // Optionally remove markers
-        routeWhileDragging: true
-    }).addTo(map);
+    // Clear the input fields and suggestions
+    startInput.value = "";  // Clear the start destination input
+    endInput.value = "";    // Clear the end destination input
+    busSearchInput.value = "";  // Assuming there's a bus search input that should be cleared
+    startSuggestions.innerHTML = "";  // Clear start destination suggestions
+    endSuggestions.innerHTML = "";    // Clear end destination suggestions
+    busSuggestions.innerHTML = "";    // Clear bus search suggestions
 
-    // Adjust map view to fit route
-    map.fitBounds([start, end]);
+    // Reset available buses (show all buses based on the current map view)
+    displayBuses();
 }
+
+// Attach event listener to the refresh button
+document.getElementById('refresh-btn').addEventListener('click', refreshMap);
 
 // Function to filter suggestions based on input and display matching destinations
 function filterDestinations(input, suggestionsDiv, destinations) {
     const query = input.value.toLowerCase();
     suggestionsDiv.innerHTML = ""; // Clear current suggestions
+
     if (query) {
         const filteredDestinations = destinations.filter(dest => dest.toLowerCase().includes(query));
+        
         filteredDestinations.forEach(dest => {
             const div = document.createElement('div');
             div.textContent = dest;
             div.onclick = () => {
                 input.value = dest;
-                suggestionsDiv.innerHTML = "";
+                suggestionsDiv.innerHTML = "";  // Clear suggestions after selection
             };
             suggestionsDiv.appendChild(div);
         });
@@ -85,11 +156,6 @@ function filterDestinations(input, suggestionsDiv, destinations) {
 }
 
 // Handle input in the destination fields
-const startInput = document.getElementById('start-destination');
-const endInput = document.getElementById('end-destination');
-const startSuggestions = document.getElementById('start-suggestions');
-const endSuggestions = document.getElementById('end-suggestions');
-
 startInput.addEventListener('input', () => filterDestinations(startInput, startSuggestions, predefinedDestinations));
 endInput.addEventListener('input', () => filterDestinations(endInput, endSuggestions, predefinedDestinations));
 
@@ -102,44 +168,6 @@ document.getElementById('search-btn').addEventListener('click', () => {
     } else {
         displayBuses();  // Show all buses within the current map area if no destinations entered
     }
-});
-
-// Handle search for buses by name (with suggestions)
-const busSearchInput = document.getElementById('bus-search');
-const busSuggestions = document.getElementById('bus-suggestions');
-
-busSearchInput.addEventListener('input', () => {
-    const query = busSearchInput.value.toLowerCase();
-    busSuggestions.innerHTML = "";
-    if (query) {
-        const filteredBuses = buses.filter(bus => bus.name.toLowerCase().includes(query));
-        filteredBuses.forEach(bus => {
-            const div = document.createElement('div');
-            div.textContent = bus.name;
-            div.onclick = () => {
-                busSearchInput.value = bus.name;
-                busSuggestions.innerHTML = "";
-                showRoute(bus);
-            };
-            busSuggestions.appendChild(div);
-        });
-    }
-});
-
-// Add refresh map feature to the button
-document.getElementById('refresh-map').addEventListener('click', () => {
-    // Clear existing routes
-    routeControl.setWaypoints([]);
-
-    // Retain current map center and zoom level
-    const currentCenter = map.getCenter();
-    const currentZoom = map.getZoom();
-
-    // Reset the map to its current view
-    map.setView(currentCenter, currentZoom);
-
-    // Optionally re-load buses in the current map area
-    displayBuses();
 });
 
 // Display buses on page load
