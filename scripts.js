@@ -60,8 +60,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Global variable for routeControl
 let routeControl = L.Routing.control({
     waypoints: [],
-    routeWhileDragging: true
+    routeWhileDragging: true,
+    router: L.Routing.osrmv1({
+        serviceUrl: 'https://router.project-osrm.org/route/v1'
+    })
 }).addTo(map);
+
 
 // DOM element initializations
 const startInput = document.getElementById('start-destination');
@@ -96,27 +100,44 @@ function displayBuses(start, end) {
     filteredBuses.forEach(bus => {
         const li = document.createElement('li');
         li.textContent = `${bus.name} - Arrives at ${start ? (bus.arrivalTimes[start] || 'N/A') : 'N/A'}`;
-        li.onclick = () => showRoute(bus);  // Trigger showRoute when bus is clicked
+        li.onclick = () => showRoute(bus, start, end);  // Trigger showRoute when bus is clicked
         busList.appendChild(li);
     });
 }
 
 
 // Function to show bus route on the map
-function showRoute(bus) {
-    // Clear previous routes
+function showRoute(bus, start = null, end = null) {
     routeControl.setWaypoints([]); // Clear previous route
 
-    // Set the waypoints for the selected bus route (from start to end)
-    const waypoints = bus.route.map(stop => L.latLng(stop[0], stop[1]));
+    let waypoints;
 
-    // Create a routing control and pass the OSRM URL
-    routeControl.setWaypoints(waypoints);
+    if (start && end) {
+        // Get index positions of start and end stops
+        let startIndex = bus.stops.indexOf(start);
+        let endIndex = bus.stops.indexOf(end);
 
-    // Get bounds for the route (using waypoints)
-    const routeBounds = L.latLngBounds(waypoints);  // Get bounds from waypoints
-    map.fitBounds(routeBounds);  // Fit map to the route bounds
+        // Ensure start comes before end
+        if (startIndex > endIndex) {
+            [startIndex, endIndex] = [endIndex, startIndex];
+        }
+
+        // Extract only the segment between start and end
+        waypoints = bus.route.slice(startIndex, endIndex + 1);
+    } else {
+        // Show full route if no start and end are provided
+        waypoints = bus.route;
+    }
+
+    // Convert coordinates to Leaflet waypoints
+    const leafletWaypoints = waypoints.map(stop => L.latLng(stop[0], stop[1]));
+    routeControl.setWaypoints(leafletWaypoints);
+
+    // Adjust map bounds
+    const routeBounds = L.latLngBounds(leafletWaypoints);
+    map.fitBounds(routeBounds);
 }
+
 
 // Function to refresh the map
 function refreshMap() {
