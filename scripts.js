@@ -5,38 +5,44 @@ const buses = [
         route: [
             [10.9046920, 76.40807], // Stop 1: SKP stand
             [10.906364, 76.413428],  // Stop 2: SBT Jn
-            [10.900149, 76.433014], // Stop 3: GEC road
+            [10.899533, 76.432078], // Stop 3: GEC road
             [10.883128, 76.435828], // stop 4: VTB road
-            [10.874851, 76.440390]  // Stop 4: KDM
+            [10.874851, 76.440390], // Stop 5: KDM
+            [10.835820, 76.572958]  // Stop 6: Mundur
         ], 
-        stops: ["SKP stand", "SBT Jn", "GEC road","VTB road","KDM"],
+        stops: ["SKP stand", "SBT Jn", "GEC road","VTB road","KDM","Mundur"],
         arrivalTimes: {
             "SKP stand": "10:30 AM",
             "SBT Jn": "10:40 AM",
             "GEC road": "10:50 AM",
-            "KDM": "11:00 AM"
+            "KDM": "11:00 AM",
+            "Mundur": "12:30",
         }
     },
     { 
-        name: "Bus 102", 
+        name: "Pavithram", 
         route: [
-            [51.505, -0.09], 
-            [51.525, -0.12], 
-            [51.545, -0.15], 
-            [51.555, -0.17]
+            [10.929019, 76.356488], // Stop 1: Muriyankanni
+            [10.906364, 76.413428], // Stop 2: SBT Jn
+            [10.899533, 76.432078], // Stop 3: GEC road
+            [10.883128, 76.435828], // stop 4: VTB road
+            [10.874851, 76.440390], // Stop 5: KDM
+            [10.835820, 76.572958]  // Stop 6: Mundur
         ], 
-        stops: ["Downtown", "Central Park", "Riverside", "Museum District"],
+        stops: ["Muriyankannin", "SBT Jn", "GEC road","VTB road","KDM","Mundur"],
         arrivalTimes: {
-            "Downtown": "10:45 AM",
-            "Central Park": "10:55 AM",
-            "Riverside": "11:05 AM",
-            "Museum District": "11:15 AM"
+            "Muriyankannin": "10:45 AM",
+            "SBT Jn": "10:55 AM",
+            "GEC road": "11:05 AM",
+            "VTB road": "11:15 AM",
+            "KDM": "11:45 AM",
+            "Mundur": "12:30"
         }
     }
 ];
 
 // Predefined destinations
-const predefinedDestinations = ["SKP stand", "SBT Jn", "GEC road","VTB road", "KDM","Downtown", "Airport", "Central Park",   "Riverside", "Museum District"];
+const predefinedDestinations = ["SKP stand","Muriyankannin", "SBT Jn", "GEC road","VTB road","KDM","Mundur"];
 
 // Initialize map
 const map = L.map('map').setView([10.89620, 76.42476], 15,
@@ -73,34 +79,28 @@ map.on('load', () => {
 
 // Function to display buses based on the selected destinations or visible area
 function displayBuses(start, end) {
-    busList.innerHTML = ""; // Clear current list
+    busList.innerHTML = ""; // Clear the current list
 
-    // Ensure that map is fully initialized and bounds are available
-    const bounds = map.getBounds ? map.getBounds() : null;
+    let filteredBuses;
 
-    // Check if bounds are available (map is loaded)
-    if (!bounds) {
-        console.error("Map bounds are not available");
-        return; // Exit the function if bounds are not available
-    }
-
-    const filteredBuses = buses.filter(bus => {
-        // If no start/end destination entered, show buses within the map bounds
-        if (!start && !end) {
-            const busLatLng = L.latLng(bus.route[0][0], bus.route[0][1]);
-            return bounds.contains(busLatLng);  // Check if bus stop is within the bounds of the map
-        }
+    if (!start && !end) {
+        // If no start or end is provided, show all buses
+        filteredBuses = buses;
+    } else {
         // Otherwise, filter buses that pass through both the start and end destinations
-        return bus.stops.includes(start) && bus.stops.includes(end);
-    });
+        filteredBuses = buses.filter(bus => 
+            bus.stops.includes(start) && bus.stops.includes(end)
+        );
+    }
 
     filteredBuses.forEach(bus => {
         const li = document.createElement('li');
-        li.textContent = `${bus.name} - Arrives at ${bus.arrivalTimes[start] || 'N/A'}`;
+        li.textContent = `${bus.name} - Arrives at ${start ? (bus.arrivalTimes[start] || 'N/A') : 'N/A'}`;
         li.onclick = () => showRoute(bus);  // Trigger showRoute when bus is clicked
         busList.appendChild(li);
     });
 }
+
 
 // Function to show bus route on the map
 function showRoute(bus) {
