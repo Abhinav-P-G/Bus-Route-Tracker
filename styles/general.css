@@ -1,0 +1,22 @@
+P{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+body {
+  font-family: DM Sans, sans-serif;
+  margin: 0;
+  padding-top: 30px;
+  background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+}
+
+:root {
+  --colorprimary: black;
+  --colorsecondary: white;
+  --coloraccent: #f66e3d;
+  --ff: "DM Sans", sans-serif;
+  --shadow: #00000030 0px 0px 10px 0px;
+  --shadowdark: #00000030 0px 5px 10px 5px;
+  --transition: 0.3s ease-in-out;
+}
+

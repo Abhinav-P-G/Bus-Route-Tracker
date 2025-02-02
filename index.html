@@ -4,36 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bus Route Finder</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/map.css">
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/general.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg" href="icons/paper-plane-solid.svg">
 </head>
 <body>
 
     <header>
-        <h1>Bus Route Finder</h1>
+      <div class="left-section">
+        <img class="paper-plane"src="icons/paper-plane-solid.svg">
+        <p class="name">travo</p>
+      </div>
+
+      <div class="right-section">
+       <p class="about">about</p> 
+      </div>
+     
+
     </header>
 
     <section class="search">
-        <label for="start-destination">Start Destination:</label>
-        <input type="text" id="start-destination" placeholder="Enter start location">
+        <div class="start-container">
+          <img  class="start-location"src="icons/location-crosshairs-solid.svg">
+          <label class="label" for="start-destination">Start Destination:</label>
+          <input class="destination" type="text" id="start-destination" placeholder="Enter Start Destination">
+          <div id="start-suggestions" class="suggestions1"></div>
+       </div>
+
+       <div class="end-container">
+        <img class="end-location" src="icons/magnifying-glass-location-solid.svg">
+        <label class="label" for="end-destination">End Destination:</label>
+        <input class="destination" type="text" id="end-destination" placeholder="Enter End Destination">
+        <div id="end-suggestions" class="suggestions2"></div>
+       </div>
+       
         
-        <label for="end-destination">End Destination:</label>
-        <input type="text" id="end-destination" placeholder="Enter end location">
+        <button id="search-btn">Search Buses</button>
+        
+        <button id="refresh-btn">Refresh</button>
+
     </section>
 
+    <!-- Not working
     <section class="bus-search">
         <label for="bus-search">Search Bus by Name:</label>
         <input type="text" id="bus-search" placeholder="Search bus">
+        <div id="bus-suggestions" class="suggestions"></div>
     </section>
-
-    <!-- This div will contain the map -->
-    <div id="map"></div>
+    -->
 
     <section id="bus-info">
         <h2>Available Buses</h2>
         <ul id="bus-list"></ul>
     </section>
+
+    <!-- This div will contain the map -->
+    <div id="map"></div>
 
     <!-- Leaflet and Routing Machine scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
