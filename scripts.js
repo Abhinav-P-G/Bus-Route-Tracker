@@ -29,7 +29,7 @@ const buses = [
             [10.874851, 76.440390], // Stop 5: KDM
             [10.835820, 76.572958]  // Stop 6: Mundur
         ], 
-        stops: ["Muriyankannin", "SBT Jn", "GEC road","VTB road","KDM","Mundur"],
+        stops: ["Muriyankanni", "SBT Jn", "GEC road","VTB road","KDM","Mundur"],
         arrivalTimes: {
             "Muriyankannin": "10:45 AM",
             "SBT Jn": "10:55 AM",
@@ -42,7 +42,7 @@ const buses = [
 ];
 
 // Predefined destinations
-const predefinedDestinations = ["SKP stand","Muriyankannin", "SBT Jn", "GEC road","VTB road","KDM","Mundur"];
+const predefinedDestinations = ["SKP stand","Muriyankanni", "SBT Jn", "GEC road","VTB road","KDM","Mundur"];
 
 // Initialize map
 const map = L.map('map').setView([10.89620, 76.42476], 15,
