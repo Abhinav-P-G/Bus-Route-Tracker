@@ -1,0 +1,45 @@
+header {
+  background-color: var(--colorsecondary);
+  color:  var(--colorprimary);
+  height: 50px;
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: middle;
+
+  box-shadow: 2px 3px 15px rgba(0,0,0,0.15);
+  background: rgb(237,237,237,.1);
+  backdrop-filter: blur(5px);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+
+}
+
+.left-section{
+  display: flex;
+  align-items: center
+}
+
+.paper-plane{
+  height: 30px;
+  margin-left: 20px;
+  margin-right: 10px;
+}
+
+.name{
+  font: bold 24px/30px var(--ff);
+}
+
+.right-section{
+  display: flex;
+  align-items: center;
+}
+
+.about{
+  font: bold 18px/30px var(--ff);
+  margin-right: 10px;
+}

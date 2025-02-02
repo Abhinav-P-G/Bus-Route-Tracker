@@ -1,19 +1,19 @@
 // Placeholder for bus data with arrival times based on start destination
 const buses = [
     { 
-        name: "Bus 101", 
+        name: "Pavizham", 
         route: [
-            [51.505, -0.09], // Stop 1: Downtown
-            [51.515, -0.1],  // Stop 2: Airport
-            [51.525, -0.12], // Stop 3: Central Station
-            [51.535, -0.14]  // Stop 4: Central Park
+            [10.9046920, 76.40807], // Stop 1: SKP stand
+            [10.906364, 76.413428],  // Stop 2: SBT Jn
+            [10.900149, 76.433014], // Stop 3: GEC road
+            [10.879107, 76.426024]  // Stop 4: KDM
         ], 
-        stops: ["Downtown", "Airport", "Central Station", "Central Park"],
+        stops: ["SKP stand", "SBT Jn", "GEC road", "KDM"],
         arrivalTimes: {
-            "Downtown": "10:30 AM",
-            "Airport": "10:40 AM",
-            "Central Station": "10:50 AM",
-            "Central Park": "11:00 AM"
+            "SKP stand": "10:30 AM",
+            "SBT Jn": "10:40 AM",
+            "GEC road": "10:50 AM",
+            "KDM": "11:00 AM"
         }
     },
     { 
@@ -35,10 +35,15 @@ const buses = [
 ];
 
 // Predefined destinations
-const predefinedDestinations = ["Downtown", "Airport", "Central Park", "Riverside", "Museum District"];
+const predefinedDestinations = ["SKP stand", "SBT Jn", "GEC road", "KDM","Downtown", "Airport", "Central Park",   "Riverside", "Museum District"];
 
 // Initialize map
-const map = L.map('map').setView([51.505, -0.09], 13); // Default location
+const map = L.map('map').setView([10.89620, 76.42476], 15,
+{
+   animate: true,
+    duration: 1.5,
+    easeLinearity: 0.3
+ }); // Default location
 
 // Add OpenStreetMap tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -107,8 +112,8 @@ function showRoute(bus) {
     // Create a routing control and pass the OSRM URL
     routeControl.setWaypoints(waypoints);
 
-    // Adjust map view to fit the route (using getRoute().getBounds())
-    const routeBounds = routeControl.getRoute().getBounds();
+    // Get bounds for the route (using waypoints)
+    const routeBounds = L.latLngBounds(waypoints);  // Get bounds from waypoints
     map.fitBounds(routeBounds);  // Fit map to the route bounds
 }
 
@@ -118,7 +123,7 @@ function refreshMap() {
     routeControl.setWaypoints([]);
 
     // Reset the map view to its initial state (center and zoom level)
-    map.setView([51.505, -0.09], 13); // Set back to the initial center and zoom
+    map.setView([10.89620, 76.42476], 13); // Set back to the initial center and zoom
 
     // Clear the input fields and suggestions
     startInput.value = "";  // Clear the start destination input
