@@ -49,13 +49,13 @@ button:hover {
   max-height: 150px;
   overflow-y: auto;
   position: absolute;
-  bottom: -40px;
+  bottom: -50px;
   right: 0;
   left: 150px;
   background-color: white;
   box-shadow: var(--shadow);
   cursor: pointer;
-  z-index: 10;
+  z-index: 30;
   border-radius: 10px;
   padding-left: 10px;
 }

@@ -6,9 +6,10 @@ const buses = [
             [10.9046920, 76.40807], // Stop 1: SKP stand
             [10.906364, 76.413428],  // Stop 2: SBT Jn
             [10.900149, 76.433014], // Stop 3: GEC road
-            [10.879107, 76.426024]  // Stop 4: KDM
+            [10.883128, 76.435828], // stop 4: VTB road
+            [10.874851, 76.440390]  // Stop 4: KDM
         ], 
-        stops: ["SKP stand", "SBT Jn", "GEC road", "KDM"],
+        stops: ["SKP stand", "SBT Jn", "GEC road","VTB road","KDM"],
         arrivalTimes: {
             "SKP stand": "10:30 AM",
             "SBT Jn": "10:40 AM",
@@ -35,7 +36,7 @@ const buses = [
 ];
 
 // Predefined destinations
-const predefinedDestinations = ["SKP stand", "SBT Jn", "GEC road", "KDM","Downtown", "Airport", "Central Park",   "Riverside", "Museum District"];
+const predefinedDestinations = ["SKP stand", "SBT Jn", "GEC road","VTB road", "KDM","Downtown", "Airport", "Central Park",   "Riverside", "Museum District"];
 
 // Initialize map
 const map = L.map('map').setView([10.89620, 76.42476], 15,
