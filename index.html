@@ -29,41 +29,49 @@
      
 
     </header>
-
-    <section class="search">
-        <div class="start-container">
-          <img  class="start-location"src="icons/location-crosshairs-solid.svg">
-          <label class="label" for="start-destination">Start Destination:</label>
-          <input class="destination" type="text" id="start-destination" placeholder="Enter Start Destination">
-          <div id="start-suggestions" class="suggestions1"></div>
-       </div>
-
-       <div class="end-container">
-        <img class="end-location" src="icons/magnifying-glass-location-solid.svg">
-        <label class="label" for="end-destination">End Destination:</label>
-        <input class="destination" type="text" id="end-destination" placeholder="Enter End Destination">
-        <div id="end-suggestions" class="suggestions2"></div>
-       </div>
-       
+    <div class="main">
+      <section class="search-button">
+        <div class="search">
+          <div class="start-container">
+            <img  class="start-location"src="icons/location-crosshairs-solid.svg">
+            <label class="label" for="start-destination">Start Destination:</label>
+            <input class="destination" type="text" id="start-destination" autocomplete="off" placeholder="Enter Start Destination">
+            <div id="start-suggestions" class="suggestions1"></div>
+          </div>
+    
+          <div class="end-container">
+            <img class="end-location" src="icons/magnifying-glass-location-solid.svg">
+            <label class="label" for="end-destination">End Destination:</label>
+            <input class="destination" type="text" id="end-destination" autocomplete="off" placeholder="Enter End Destination">
+            <div id="end-suggestions" class="suggestions2"></div>
+          </div>
+        </div>
         
-        <button id="search-btn">Search Buses</button>
         
-        <button id="refresh-btn">Refresh</button>
-
-    </section>
-
-    <!-- Not working
-    <section class="bus-search">
-        <label for="bus-search">Search Bus by Name:</label>
-        <input type="text" id="bus-search" placeholder="Search bus">
-        <div id="bus-suggestions" class="suggestions"></div>
-    </section>
-    -->
-
-    <section id="bus-info">
-        <h2>Available Buses</h2>
-        <ul id="bus-list"></ul>
-    </section>
+        <div class="buttons">
+          <button class="btn1" id="search-btn">Search Buses</button>     
+          <button class="btn2" id="refresh-btn">Refresh</button>
+        </div>  
+          
+  
+      </section>
+  
+      <!-- Not working
+      <section class="bus-search">
+          <label for="bus-search">Search Bus by Name:</label>
+          <input type="text" id="bus-search" placeholder="Search bus">
+          <div id="bus-suggestions" class="suggestions"></div>
+      </section>
+      -->
+      
+        <section id="bus-info">
+          <h2>Available Buses</h2>
+          <ul id="bus-list"></ul>
+        </section>
+      
+      
+    </div>
+    
 
     <!-- This div will contain the map -->
     <div id="map"></div>
