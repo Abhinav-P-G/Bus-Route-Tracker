@@ -1,48 +1,36 @@
 // Placeholder for bus data with arrival times based on start destination
-const buses = [
-    { 
-        name: "Pavizham", 
-        route: [
-            [10.9046920, 76.40807], // Stop 1: SKP stand
-            [10.906364, 76.413428],  // Stop 2: SBT Jn
-            [10.899533, 76.432078], // Stop 3: GEC road
-            [10.883128, 76.435828], // stop 4: VTB road
-            [10.874851, 76.440390], // Stop 5: KDM
-            [10.835820, 76.572958]  // Stop 6: Mundur
-        ], 
-        stops: ["SKP stand", "SBT Jn", "GEC road","VTB road","KDM","Mundur"],
-        arrivalTimes: {
-            "SKP stand": "10:30 AM",
-            "SBT Jn": "10:40 AM",
-            "GEC road": "10:50 AM",
-            "KDM": "11:00 AM",
-            "Mundur": "12:30",
-        }
-    },
-    { 
-        name: "Pavithram", 
-        route: [
-            [10.929019, 76.356488], // Stop 1: Muriyankanni
-            [10.906364, 76.413428], // Stop 2: SBT Jn
-            [10.899533, 76.432078], // Stop 3: GEC road
-            [10.883128, 76.435828], // stop 4: VTB road
-            [10.874851, 76.440390], // Stop 5: KDM
-            [10.835820, 76.572958]  // Stop 6: Mundur
-        ], 
-        stops: ["Muriyankanni", "SBT Jn", "GEC road","VTB road","KDM","Mundur"],
-        arrivalTimes: {
-            "Muriyankannin": "10:45 AM",
-            "SBT Jn": "10:55 AM",
-            "GEC road": "11:05 AM",
-            "VTB road": "11:15 AM",
-            "KDM": "11:45 AM",
-            "Mundur": "12:30"
-        }
-    }
-];
+let buses = []; // Global variable to store data from JSON
+
+fetch('data/busData.json')
+  .then(response => response.json())
+  .then(data => {
+    buses = data;
+    displayBuses();  // Call initial display after data is loaded
+  })
+  .catch(error => {
+    console.error("Failed to load bus data:", error);
+  });
+
 
 // Predefined destinations
-const predefinedDestinations = ["SKP stand","Muriyankanni", "SBT Jn", "GEC road","VTB road","KDM","Mundur"];
+let predefinedDestinations = [];
+
+fetch('data/busData.json')
+  .then(response => response.json())
+  .then(data => {
+    buses = data;
+
+    // Generate unique destinations
+    const stopsSet = new Set();
+    buses.forEach(bus => bus.stops.forEach(stop => stopsSet.add(stop)));
+    predefinedDestinations = Array.from(stopsSet);
+
+    displayBuses();
+  })
+  .catch(error => {
+    console.error("Failed to load bus data:", error);
+  });
+
 
 // Initialize map
 const map = L.map('map').setView([10.89620, 76.42476], 15,
@@ -88,55 +76,109 @@ function displayBuses(start, end) {
     let filteredBuses;
 
     if (!start && !end) {
-        // If no start or end is provided, show all buses
         filteredBuses = buses;
     } else {
-        // Otherwise, filter buses that pass through both the start and end destinations
         filteredBuses = buses.filter(bus => 
             bus.stops.includes(start) && bus.stops.includes(end)
         );
     }
 
-    filteredBuses.forEach(bus => {
+    const now = new Date();
+
+    // Filter and sort buses by arrival time at the start point
+    const upcomingBuses = filteredBuses
+        .map(bus => {
+            const arrivalStr = bus.arrivalTimes[start];
+            if (!arrivalStr) return null;
+
+            // Convert arrival string to a Date object
+            const todayStr = new Date().toDateString(); // e.g., "Tue Apr 30 2025"
+            const fullArrival = new Date(`${todayStr} ${arrivalStr}`);
+
+            if (fullArrival < now) return null; // Skip if bus has already passed
+
+            return { ...bus, arrivalDate: fullArrival };
+        })
+        .filter(Boolean) // Remove nulls
+        .sort((a, b) => a.arrivalDate - b.arrivalDate); // Sort by earliest arrival
+
+    // Display the sorted and filtered buses
+    upcomingBuses.forEach(bus => {
         const li = document.createElement('li');
         li.textContent = `${bus.name} - Arrives at ${start ? (bus.arrivalTimes[start] || 'N/A') : 'N/A'}`;
-        li.onclick = () => showRoute(bus, start, end);  // Trigger showRoute when bus is clicked
+        li.onclick = () => showRoute(bus, start, end);
         busList.appendChild(li);
     });
 }
 
+function parseTimeToToday(timeStr) {
+    const [time, modifier] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+
+    if (modifier === 'PM' && hours !== 12) hours += 12;
+    if (modifier === 'AM' && hours === 12) hours = 0;
+
+    const now = new Date();
+    const arrival = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+    return arrival;
+}
+
+
+
 
 // Function to show bus route on the map
 function showRoute(bus, start = null, end = null) {
-    routeControl.setWaypoints([]); // Clear previous route
+    routeControl.setWaypoints([]);
 
     let waypoints;
-
     if (start && end) {
-        // Get index positions of start and end stops
         let startIndex = bus.stops.indexOf(start);
         let endIndex = bus.stops.indexOf(end);
-
-        // Ensure start comes before end
-        if (startIndex > endIndex) {
-            [startIndex, endIndex] = [endIndex, startIndex];
-        }
-
-        // Extract only the segment between start and end
+        if (startIndex > endIndex) [startIndex, endIndex] = [endIndex, startIndex];
         waypoints = bus.route.slice(startIndex, endIndex + 1);
     } else {
-        // Show full route if no start and end are provided
         waypoints = bus.route;
     }
 
-    // Convert coordinates to Leaflet waypoints
     const leafletWaypoints = waypoints.map(stop => L.latLng(stop[0], stop[1]));
     routeControl.setWaypoints(leafletWaypoints);
+    map.fitBounds(L.latLngBounds(leafletWaypoints));
 
-    // Adjust map bounds
-    const routeBounds = L.latLngBounds(leafletWaypoints);
-    map.fitBounds(routeBounds);
+    // Show stop name tooltips
+    addStopMarkers(bus);
 }
+
+
+// Function to add stop markers with hoverable tooltips displaying stop name and arrival time
+function addStopMarkers(bus) {
+    // First, remove any existing markers (optional cleanup)
+    if (window.stopMarkers) {
+        window.stopMarkers.forEach(marker => map.removeLayer(marker));
+    }
+    window.stopMarkers = [];
+
+    bus.route.forEach((coord, index) => {
+        const stopName = bus.stops[index];
+        const arrivalTime = bus.arrivalTimes[stopName] || 'N/A';  // Get the arrival time (default to 'N/A' if not available)
+
+        const marker = L.marker(coord).addTo(map);
+
+        // Create the tooltip content (stop name + arrival time)
+        const tooltipContent = `<strong>${stopName}</strong><br>Arrival Time: ${arrivalTime}`;
+
+        // Bind a tooltip (appears on hover)
+        marker.bindTooltip(tooltipContent, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -10],
+            className: 'custom-tooltip'
+        });
+
+        window.stopMarkers.push(marker);
+    });
+}
+
+
 
 
 // Function to refresh the map

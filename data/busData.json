@@ -1,0 +1,42 @@
+[
+    {
+      "name": "Pavizham",
+      "route": [
+        [10.9046920, 76.40807],
+        [10.906364, 76.413428],
+        [10.899533, 76.432078],
+        [10.883128, 76.435828],
+        [10.874851, 76.440390],
+        [10.835820, 76.572958]
+      ],
+      "stops": ["SKP stand", "SBT Jn", "GEC road", "VTB road", "KDM", "Mundur"],
+      "arrivalTimes": {
+        "SKP stand": "10:30 AM",
+        "SBT Jn": "10:40 AM",
+        "GEC road": "10:50 AM",
+        "KDM": "11:00 AM",
+        "Mundur": "12:30"
+      }
+    },
+    {
+      "name": "Pavithram",
+      "route": [
+        [10.929019, 76.356488],
+        [10.906364, 76.413428],
+        [10.899533, 76.432078],
+        [10.883128, 76.435828],
+        [10.874851, 76.440390],
+        [10.835820, 76.572958]
+      ],
+      "stops": ["Muriyankanni", "SBT Jn", "GEC road", "VTB road", "KDM", "Mundur"],
+      "arrivalTimes": {
+        "Muriyankanni": "10:45 AM",
+        "SBT Jn": "10:55 AM",
+        "GEC road": "11:05 AM",
+        "VTB road": "11:15 AM",
+        "KDM": "11:45 AM",
+        "Mundur": "12:30"
+      }
+    }
+  ]
+  

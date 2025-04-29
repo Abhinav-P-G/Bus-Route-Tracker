@@ -9,6 +9,19 @@
   width: 300px;
 }
 
+.custom-tooltip {
+  background-color: white;
+  color: black;
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+
 @media (max-width: 576px){
   .main{
     grid-template-columns: 1fr;
