@@ -7,15 +7,18 @@
         [10.899533, 76.432078],
         [10.883128, 76.435828],
         [10.874851, 76.440390],
-        [10.835820, 76.572958]
+        [10.835820, 76.572958],
+        [10.767772, 76.649113]
       ],
-      "stops": ["SKP stand", "SBT Jn", "GEC road", "VTB road", "KDM", "Mundur"],
+      "stops": ["SKP stand", "SBT Jn", "GEC road", "VTB road", "KDM", "Mundur","Palakkad"],
       "arrivalTimes": {
-        "SKP stand": "10:30 AM",
-        "SBT Jn": "10:40 AM",
-        "GEC road": "10:50 AM",
-        "KDM": "11:00 AM",
-        "Mundur": "12:30"
+        "SKP stand": "8:30 AM",
+        "SBT Jn": "8:40 AM",
+        "GEC road": "8:55 AM",
+        "VTB road": "9:00 AM",
+        "KDM": "9:05 AM",
+        "Mundur": "9:40 AM",
+        "Palakkad":"10:25 AM"
       }
     },
     {
@@ -26,16 +29,18 @@
         [10.899533, 76.432078],
         [10.883128, 76.435828],
         [10.874851, 76.440390],
-        [10.835820, 76.572958]
+        [10.835820, 76.572958],
+        [10.767772, 76.649113]
       ],
-      "stops": ["Muriyankanni", "SBT Jn", "GEC road", "VTB road", "KDM", "Mundur"],
+      "stops": ["Muriyankanni", "SBT Jn", "GEC road", "VTB road", "KDM", "Mundur","Palakkad"],
       "arrivalTimes": {
-        "Muriyankanni": "10:45 AM",
-        "SBT Jn": "10:55 AM",
-        "GEC road": "11:05 AM",
-        "VTB road": "11:15 AM",
-        "KDM": "11:45 AM",
-        "Mundur": "12:30"
+        "Muriyankanni": "4:15 PM",
+        "SBT Jn": "4:40 PM",
+        "GEC road": "4:55 PM",
+        "VTB road": "5:00 PM",
+        "KDM": "5:10 PM",
+        "Mundur": "5:55 PM",
+        "Palakkad": "6: 40 PM"
       }
     }
   ]
